@@ -1,3 +1,4 @@
+#include <fstream>
 #include <iostream>
 
 /*
@@ -42,16 +43,37 @@ int main() {
     // получаем набор точек у пользователя
     // по точкам создаем набор точек кривой
     // выводим результат
-    double step = 0.05;
+    double step = 0.001;
     vector_points points{
             {7, 2},
             {5, 7},
-            {10, 3}
+            {10, 3},
+            {12, 6},
+            {4, 3},
+            {15, 7},
+            {3, 4}
     };
+
+    std::ofstream file("../bezier2d.json");
+
+    if (!file.is_open()) {
+        std::cout << "error" << std::endl;
+    }
+
+    file << "[ \n";
     // пока шаг не очень маленький можно так
     for (auto t = 0.0; t <= 1.0; t += step) {
         auto p = bezier(points, t);
-        std::cout << "[ " << p.x << ", " << p.y << " ], " << std::endl;
+        file << "[ " << p.x << ", " << p.y << " ]";
+        if(t+step < 1.0) {
+            file << ",\n";
+        } else {
+            file << "\n";
+        }
     }
+    file << "] \n";
+
+    file.close();
+
     return 0;
 }
