@@ -9,9 +9,9 @@
 
 #include <vector>
 #include <algorithm>
-#include <cmath>
 #include "point.h"
 
+using point = vec<double, 2>;
 using vector_points = std::vector<point>;
 
 point bezier(vector_points points, double t) {
@@ -45,13 +45,13 @@ int main() {
     // выводим результат
     double step = 0.001;
     vector_points points{
-            {7, 2},
-            {5, 7},
-            {10, 3},
-            {12, 6},
-            {4, 3},
-            {15, 7},
-            {3, 4}
+            {7., 2.},
+            {5., 7.},
+            {10., 3.},
+            {12., 6.},
+            {4., 3.},
+            {15., 7.},
+            {3., 4.}
     };
 
     std::ofstream file("../bezier2d.json");
@@ -64,7 +64,7 @@ int main() {
     // пока шаг не очень маленький можно так
     for (auto t = 0.0; t <= 1.0; t += step) {
         auto p = bezier(points, t);
-        file << "[ " << p.x << ", " << p.y << " ]";
+        file << "[ " << p.coordinates[0] << ", " << p.coordinates[1] << " ]";
         if(t+step < 1.0) {
             file << ",\n";
         } else {
