@@ -66,7 +66,7 @@ struct plane_t {
 
 
 point_t projection_on_plane(point_t point, plane_t plane) {
-
+    // переходим к уравнению двух пересекающихся плоскостей
 }
 
 vector_points projection_on_plane(vector_points points, plane_t plane) {
