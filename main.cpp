@@ -1,17 +1,11 @@
 #include <fstream>
 #include <iostream>
-
-/*
-Требуется реализовать функцию проецирования кривой Безье в заданном интервале на плоскость по нормали.
-Кривая должна быть построена по заданному набору опорных точек. Плоскость должна быть построена по заданным трём точкам.
-Положение искомых точек найти с точностью 10-5
-*/
-
 #include <vector>
 #include <algorithm>
-#include "point.h"
+#include <valarray>
+#include <array>
 
-using point_t = vec<double, 3>;
+using point_t = std::valarray<double>;
 using vector_points = std::vector<point_t>;
 
 point_t bezier(vector_points points, double t) {
@@ -36,6 +30,16 @@ point_t bezier(vector_points points, double t) {
     } else {
         return points.back();
     }
+}
+
+vector_points bezier_line(vector_points points, double eps) {
+    vector_points res;
+    res.reserve(unsigned(1./eps));
+    auto step = eps;
+    for (auto t = 0.0; t <= 1.0; t += step) {
+        res.push_back(bezier(points, t));
+    }
+    return res;
 }
 
 struct plane_t {
@@ -74,9 +78,16 @@ vector_points projection_on_plane(vector_points points, plane_t plane) {
 }
 
 int main() {
+    /*
+    Требуется реализовать функцию проецирования кривой Безье в заданном интервале на плоскость по нормали.
+    Кривая должна быть построена по заданному набору опорных точек. Плоскость должна быть построена по заданным трём точкам.
+    Положение искомых точек найти с точностью 10-5
+    */
+
     // примерный алгоритм работы
     // получаем набор точек у пользователя
     // по точкам создаем набор точек кривой
+    // по точкам кривой проецируем
     // выводим результат
     double step = 0.001;
     vector_points points{
@@ -99,7 +110,7 @@ int main() {
     // пока шаг не очень маленький можно так
     for (auto t = 0.0; t <= 1.0; t += step) {
         auto p = bezier(points, t);
-        file << "[ " << p.coordinates[0] << ", " << p.coordinates[1] << " ]";
+        file << "[ " << p[0] << ", " << p[1] << " ]";
         if(t+step < 1.0) {
             file << ",\n";
         } else {
