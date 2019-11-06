@@ -81,6 +81,14 @@ public:
         *this = arr;
     }
 
+    T& operator[](size_t index) {
+        return const_cast<T&>(coordinates[index]);
+    }
+
+    const T& operator[](size_t index) const {
+        return coordinates[index];
+    }
+
     vec& normalize() {
         if (length() == 0) return *this;
         *this *= (1.0 / length());
