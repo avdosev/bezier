@@ -45,7 +45,8 @@ vector_points bezier_line(vector_points points, double eps) {
 }
 
 struct plane_t {
-    std::array<double, 4> equation;
+    using equ_t = std::array<double, 4>;
+    equ_t equation;
     
     plane_t(point_t p1, point_t p2, point_t p3) {
         double mat[3][2] = {
@@ -59,6 +60,10 @@ struct plane_t {
         equation[3] = equation[0]*p1[0] + equation[1]*p1[1] + equation[2]*p1[2];
     }
 
+    plane_t(equ_t equat) : equation(equat) {
+        std::cout << "puk2";
+    };
+
     point_t normal() {
         auto& equ = this->equation;
         return {equ[0], equ[1], equ[2]};
@@ -70,11 +75,11 @@ point_t projection_on_plane(point_t point, plane_t plane) {
     // переходим к уравнению двух пересекающихся плоскостей
     // и юзаем метод крамера ( не зря же я написал определитель для матрицы )
     point_t res;
-
+    auto normal = plane.normal();
     // TODO заполнить доконца
     std::array<std::array<double, 4>, 3> equ{
-            std::array<double, 4>{0.,0.,0.,0.},
-            std::array<double, 4>{0.,0.,0.,0.},
+            std::array<double, 4>{normal[1], -normal[0], 0., normal[1]*-point[0] - normal[0]*-point[1]},
+            std::array<double, 4>{normal[2], -normal[0], 0., normal[2]*-point[0] - normal[0]*-point[2]},
             std::array<double, 4>{ plane.equation[0], plane.equation[1], plane.equation[2], -plane.equation[3] }
     };
 
@@ -117,6 +122,7 @@ vector_points projection_on_plane(vector_points points, plane_t plane) {
 }
 
 int main() {
+    std::cout << "puk";
     /*
     Требуется реализовать функцию проецирования кривой Безье в заданном интервале на плоскость по нормали.
     Кривая должна быть построена по заданному набору опорных точек. Плоскость должна быть построена по заданным трём точкам.
@@ -159,6 +165,11 @@ int main() {
     file << "] \n";
 
     file.close();
+    /*plane_t plane(plane_t::equ_t {2,-2,1,-2});
+    point_t point{-2.,4., 4.};
+
+    auto res = projection_on_plane(point, plane);
+    std::cout << res[0] << " " << res[1] << " " << res[2] << "\n" ;*/
 
     return 0;
 }
