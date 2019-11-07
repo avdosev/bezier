@@ -3,4 +3,4 @@ project(bezier)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(bezier main.cpp matrix.h)
+add_executable(bezier main.cpp matrix.h vec.h)

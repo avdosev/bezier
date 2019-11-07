@@ -6,8 +6,11 @@
 #include <array>
 
 #include "matrix.h"
+#include "vec.h"
 
-using point_t = std::valarray<double>;
+// с ним у меня почему то вылетает, возможно это не популярный котейнер
+// using point_t = std::valarray<double>;
+using  point_t = vec<double, 3>;
 using vector_points = std::vector<point_t>;
 
 point_t bezier(vector_points points, double t) {
@@ -60,9 +63,7 @@ struct plane_t {
         equation[3] = equation[0]*p1[0] + equation[1]*p1[1] + equation[2]*p1[2];
     }
 
-    plane_t(equ_t equat) : equation(equat) {
-        std::cout << "puk2";
-    };
+    plane_t(equ_t equat) : equation(equat) { };
 
     point_t normal() {
         auto& equ = this->equation;
@@ -79,7 +80,7 @@ point_t projection_on_plane(point_t point, plane_t plane) {
     // TODO заполнить доконца
     std::array<std::array<double, 4>, 3> equ{
             std::array<double, 4>{normal[1], -normal[0], 0., normal[1]*-point[0] - normal[0]*-point[1]},
-            std::array<double, 4>{normal[2], -normal[0], 0., normal[2]*-point[0] - normal[0]*-point[2]},
+            std::array<double, 4>{normal[2], 0., -normal[0], normal[2]*-point[0] - normal[0]*-point[2]},
             std::array<double, 4>{ plane.equation[0], plane.equation[1], plane.equation[2], -plane.equation[3] }
     };
 
@@ -97,7 +98,7 @@ point_t projection_on_plane(point_t point, plane_t plane) {
     // заполняет столбец матрицы
     auto fill_column = [&matr, &equ](size_t index){
         for (size_t j = 0; j < 3; j++) {
-            matr[index][j] = equ[3][j];
+            matr[index][j] = equ[j][3];
         }
     };
 
@@ -105,7 +106,7 @@ point_t projection_on_plane(point_t point, plane_t plane) {
     auto det = matr.determinant();
     for (auto i = 0; i < 3; i++) {
         fill_matrix();
-        fill_column(0);
+        fill_column(i);
         auto det_by_coordinate = matr.determinant();
         res[i] = det_by_coordinate / det;
     }
@@ -122,7 +123,7 @@ vector_points projection_on_plane(vector_points points, plane_t plane) {
 }
 
 int main() {
-    std::cout << "puk";
+
     /*
     Требуется реализовать функцию проецирования кривой Безье в заданном интервале на плоскость по нормали.
     Кривая должна быть построена по заданному набору опорных точек. Плоскость должна быть построена по заданным трём точкам.
@@ -134,42 +135,42 @@ int main() {
     // по точкам создаем набор точек кривой
     // по точкам кривой проецируем
     // выводим результат
-    double step = 0.001;
-    vector_points points{
-            {7., 2.},
-            {5., 7.},
-            {10., 3.},
-            {12., 6.},
-            {4., 3.},
-            {15., 7.},
-            {3., 4.}
-    };
-
-    std::ofstream file("../bezier2d.json");
-
-    if (!file.is_open()) {
-        std::cout << "error" << std::endl;
-    }
-
-    file << "[ \n";
-    // пока шаг не очень маленький можно так
-    for (auto t = 0.0; t <= 1.0; t += step) {
-        auto p = bezier(points, t);
-        file << "[ " << p[0] << ", " << p[1] << " ]";
-        if(t+step < 1.0) {
-            file << ",\n";
-        } else {
-            file << "\n";
-        }
-    }
-    file << "] \n";
-
-    file.close();
-    /*plane_t plane(plane_t::equ_t {2,-2,1,-2});
+//    double step = 0.001;
+//    vector_points points{
+//            {7., 2.},
+//            {5., 7.},
+//            {10., 3.},
+//            {12., 6.},
+//            {4., 3.},
+//            {15., 7.},
+//            {3., 4.}
+//    };
+//
+//    std::ofstream file("../bezier2d.json");
+//
+//    if (!file.is_open()) {
+//        std::cout << "error" << std::endl;
+//    }
+//
+//    file << "[ \n";
+//    // пока шаг не очень маленький можно так
+//    for (auto t = 0.0; t <= 1.0; t += step) {
+//        auto p = bezier(points, t);
+//        file << "[ " << p[0] << ", " << p[1] << " ]";
+//        if(t+step < 1.0) {
+//            file << ",\n";
+//        } else {
+//            file << "\n";
+//        }
+//    }
+//    file << "] \n";
+//
+//    file.close();
+    plane_t plane(plane_t::equ_t {2,-3,1,-2});
     point_t point{-2.,4., 4.};
 
     auto res = projection_on_plane(point, plane);
-    std::cout << res[0] << " " << res[1] << " " << res[2] << "\n" ;*/
+    std::cout << res[0] << " " << res[1] << " " << res[2] << "\n" ;
 
     return 0;
 }
