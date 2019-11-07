@@ -5,6 +5,8 @@
 #include <valarray>
 #include <array>
 
+#include "matrix.h"
+
 using point_t = std::valarray<double>;
 using vector_points = std::vector<point_t>;
 
@@ -43,23 +45,22 @@ vector_points bezier_line(vector_points points, double eps) {
 }
 
 struct plane_t {
-    point_t p1, p2, p3;
-    std::array<double, 4> equation() {
-        std::array<double, 4> res;
-        double matrix[3][2] = {
+    std::array<double, 4> equation;
+    
+    plane_t(point_t p1, point_t p2, point_t p3) {
+        double mat[3][2] = {
                 {p2[0]-p1[0], p3[0]-p1[0]},
                 {p2[1]-p1[1], p3[1]-p1[1]},
                 {p2[2]-p1[2], p3[2]-p1[2]}
         };
-        res[0] = matrix[1][0]*matrix[2][1] - matrix[1][1]*matrix[2][0];
-        res[1] = matrix[0][0]*matrix[2][1] - matrix[2][1]*matrix[2][0];
-        res[2] = matrix[0][0]*matrix[1][1] - matrix[1][1]*matrix[2][0];
-        res[3] = res[0]*p1[0] + res[1]*p1[1] + res[2]*p1[2];
-        return res;
+        equation[0] = mat[1][0] * mat[2][1] - mat[1][1] * mat[2][0];
+        equation[1] = mat[0][0] * mat[2][1] - mat[2][1] * mat[2][0];
+        equation[2] = mat[0][0] * mat[1][1] - mat[1][1] * mat[2][0];
+        equation[3] = equation[0]*p1[0] + equation[1]*p1[1] + equation[2]*p1[2];
     }
 
     point_t normal() {
-        auto equ = this->equation();
+        auto& equ = this->equation;
         return {equ[0], equ[1], equ[2]};
     }
 };
@@ -67,6 +68,44 @@ struct plane_t {
 
 point_t projection_on_plane(point_t point, plane_t plane) {
     // переходим к уравнению двух пересекающихся плоскостей
+    // и юзаем метод крамера ( не зря же я написал определитель для матрицы )
+    point_t res;
+
+    // TODO заполнить доконца
+    std::array<std::array<double, 4>, 3> equ{
+            std::array<double, 4>{0.,0.,0.,0.},
+            std::array<double, 4>{0.,0.,0.,0.},
+            std::array<double, 4>{ plane.equation[0], plane.equation[1], plane.equation[2], -plane.equation[3] }
+    };
+
+    using matrix_t = matrix<double, 3>;
+
+    matrix_t matr;
+    // заполняет всю матрицу
+    auto fill_matrix = [&matr, &equ](){
+        for (size_t i = 0; i < 3; i++) {
+            for (size_t j = 0; j < 3; j++) {
+                matr[i][j] = equ[i][j];
+            }
+        }
+    };
+    // заполняет столбец матрицы
+    auto fill_column = [&matr, &equ](size_t index){
+        for (size_t j = 0; j < 3; j++) {
+            matr[index][j] = equ[3][j];
+        }
+    };
+
+    fill_matrix();
+    auto det = matr.determinant();
+    for (auto i = 0; i < 3; i++) {
+        fill_matrix();
+        fill_column(0);
+        auto det_by_coordinate = matr.determinant();
+        res[i] = det_by_coordinate / det;
+    }
+
+    return res;
 }
 
 vector_points projection_on_plane(vector_points points, plane_t plane) {

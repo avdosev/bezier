@@ -29,7 +29,7 @@ public:
             matrix<T, 2> buff;
             for (size_t i = 0; i < 2; i++) {
                 for (size_t j = 0; j < 2; j++) {
-                    buff.m = det(y+i, x+j, size-1);
+                    buff[i][j] = det(y+i, x+j, size-1);
                 }
             }
 
@@ -55,5 +55,9 @@ public:
             b_i++;
         }
         return buff;
+    }
+
+    array<T, num>& operator[] (size_t index) {
+        return m[index];
     }
 };
