@@ -136,15 +136,10 @@ int main() {
     // по точкам кривой проецируем
     // выводим результат
 //    double step = 0.001;
-//    vector_points points{
-//            {7., 2.},
-//            {5., 7.},
-//            {10., 3.},
-//            {12., 6.},
-//            {4., 3.},
-//            {15., 7.},
-//            {3., 4.}
-//    };
+    vector_points points{
+            {5., 2., 0.},
+            {5., 7., 0.},
+    };
 //
 //    std::ofstream file("../bezier2d.json");
 //
@@ -169,7 +164,8 @@ int main() {
     plane_t plane(plane_t::equ_t {2,-3,1,-2});
     point_t point{-2.,4., 4.};
 
-    auto res = projection_on_plane(point, plane);
+    auto ress = projection_on_plane(points, plane);
+    for (auto res : ress)
     std::cout << res[0] << " " << res[1] << " " << res[2] << "\n" ;
 
     return 0;
