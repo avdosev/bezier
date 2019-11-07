@@ -39,7 +39,7 @@ public:
             T res = 0;
             for (size_t i = 0; i < num; i++) {
                 auto minor_ = this->minor(x, y+i).determinant();
-                res += T(-1 * (ssize_t(i)&1)) * m[y+i][x] * minor_;
+                res += T( bool(i&1) ? -1 : 1) * m[y+i][x] * minor_;
             }
 
             return res;

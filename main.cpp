@@ -77,10 +77,10 @@ point_t projection_on_plane(point_t point, plane_t plane) {
     // и юзаем метод крамера ( не зря же я написал определитель для матрицы )
     point_t res;
     auto normal = plane.normal();
-    // TODO заполнить доконца
+
     std::array<std::array<double, 4>, 3> equ{
-            std::array<double, 4>{normal[1], -normal[0], 0., normal[1]*-point[0] - normal[0]*-point[1]},
-            std::array<double, 4>{normal[2], 0., -normal[0], normal[2]*-point[0] - normal[0]*-point[2]},
+            std::array<double, 4>{-normal[1], normal[0], 0., normal[1]*-point[0] - normal[0]*-point[1]},
+            std::array<double, 4>{normal[2], 0., -normal[0], normal[2]*point[0] - normal[0]*point[2]},
             std::array<double, 4>{ plane.equation[0], plane.equation[1], plane.equation[2], -plane.equation[3] }
     };
 
@@ -98,7 +98,7 @@ point_t projection_on_plane(point_t point, plane_t plane) {
     // заполняет столбец матрицы
     auto fill_column = [&matr, &equ](size_t index){
         for (size_t j = 0; j < 3; j++) {
-            matr[index][j] = equ[j][3];
+            matr[j][index] = equ[j][3];
         }
     };
 
