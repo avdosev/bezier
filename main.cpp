@@ -30,18 +30,20 @@ int main() {
     // по точкам кривой проецируем
     // выводим результат
     size_t count_prop_points;
-
+    std::cout << "count prop points: ";
     std::cin >> count_prop_points;
 
     vector_points prop_points;
+    prop_points.reserve(count_prop_points);
 
     for (size_t i = 0; i < count_prop_points; i++) {
         point_t tmp_point;
+        std::cout << "point " << i+1 << ": ";
         std::cin >> tmp_point;
         prop_points.push_back(tmp_point);
     }
 
-
+    std::cout << "plane points: \n";
     point_t points_for_plane[3];
     for (int i = 0; i < 3; i++) {
         for (auto& coordinate : points_for_plane[i].coordinates) {
@@ -50,7 +52,7 @@ int main() {
     }
 
     // просчитываем безье
-    auto bezier_points = bezier_line(prop_points, 0.0001);
+    auto bezier_points = bezier_line(prop_points, 0.001);
 
     // создаем на базе трех точек объект плоскость
     plane_t plane(points_for_plane[0], points_for_plane[1], points_for_plane[2]);
@@ -58,6 +60,7 @@ int main() {
     // проецируем на плоскость
     auto projected_points = projection_on_plane(bezier_points, plane);
 
+    std::cout << "projected bezier points:" << std::endl;
     for (auto res : projected_points)
         std::cout << res << "\n" ;
 
