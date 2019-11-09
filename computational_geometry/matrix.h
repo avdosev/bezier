@@ -5,16 +5,12 @@
 #pragma once
 
 #include <array>
-#include <vector>
-#include <functional>
 
 template <class T, size_t num>
 class matrix {
 private:
     template <class _T, size_t _num>
     using array = std::array<_T, _num>;
-    using vector = std::vector<T>;
-
     array<array<T, num>, num> m;
 public:
     T determinant() {
@@ -62,11 +58,9 @@ class matrix <T, 1> {
 private:
     template <class _T, size_t _num>
     using array = std::array<_T, _num>;
-
     array<T, 1> m;
 public:
     T determinant() {
-        // я не уверен что нужно возвращать
         return m[0];
     }
 

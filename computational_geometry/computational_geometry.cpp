@@ -13,7 +13,7 @@ plane_t::plane_t(point_t p1, point_t p2, point_t p3)  {
     equation[0] = vecM1M2[1] * vecM1M3[2] - vecM1M2[2] * vecM1M3[1];
     equation[1] = -vecM1M2[0] * vecM1M3[2] + vecM1M2[2] * vecM1M3[0];
     equation[2] = vecM1M2[0] * vecM1M3[1] - vecM1M2[1] * vecM1M3[0];
-    equation[3] = equation[0]*-p1[0] + equation[1]*p1[1] + equation[2]*-p1[2];
+    equation[3] = -equation[0]*p1[0] + equation[1]*p1[1] - equation[2]*p1[2];
 }
 
 point_t plane_t::normal() {
@@ -58,41 +58,11 @@ vector_points bezier_line(vector_points points, double eps) {
 point_t projection_on_plane(point_t point, plane_t plane) {
     // переходим к уравнению двух пересекающихся плоскостей
     // и юзаем метод крамера ( не зря же я написал определитель для матрицы )
-    point_t res;
+    // окозалось что зря, использовать метод пересекающихся плоскостей окозалось нецелесообразно при плоскости паралельной оси ординат
     auto normal = plane.normal();
 
-    std::array<std::array<double, 4>, 3> equ{
-            std::array<double, 4>{-normal[1], normal[0], 0., normal[1]*-point[0] - normal[0]*-point[1]},
-            std::array<double, 4>{normal[2], 0., -normal[0], normal[2]*point[0] - normal[0]*point[2]},
-            std::array<double, 4>{ plane.equation[0], plane.equation[1], plane.equation[2], -plane.equation[3] }
-    };
-
-    using matrix_t = matrix<double, 3>;
-
-    matrix_t matr;
-    // заполняет всю матрицу
-    auto fill_matrix = [&matr, &equ](){
-        for (size_t i = 0; i < 3; i++) {
-            for (size_t j = 0; j < 3; j++) {
-                matr[i][j] = equ[i][j];
-            }
-        }
-    };
-    // заполняет столбец матрицы
-    auto fill_column = [&matr, &equ](size_t index){
-        for (size_t j = 0; j < 3; j++) {
-            matr[j][index] = equ[j][3];
-        }
-    };
-
-    fill_matrix();
-    auto det = matr.determinant();
-    for (auto i = 0; i < 3; i++) {
-        fill_matrix();
-        fill_column(i);
-        auto det_by_coordinate = matr.determinant();
-        res[i] = det_by_coordinate / det;
-    }
+    double t = -((point*normal).sum()+plane.equation.back()) / ((normal*normal).sum());
+    point_t res = normal * t + point;
 
     return res;
 }

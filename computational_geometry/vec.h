@@ -39,6 +39,13 @@ public:
         return *this;
     }
 
+    vec& operator*=(vec v) {
+        for (size_t i = 0; i < size; i++) {
+            coordinates[i] *= v.coordinates[i];
+        }
+        return *this;
+    }
+
     vec operator+(vec v) {
         vec tmp = *this;
         tmp += v;
@@ -48,6 +55,12 @@ public:
     vec operator-(vec v) {
         vec tmp = *this;
         tmp -= v;
+        return tmp;
+    }
+
+    vec operator*(vec v) {
+        vec tmp = *this;
+        tmp *= v;
         return tmp;
     }
 
@@ -70,6 +83,7 @@ public:
         }
         return *this;
     }
+
     vec& operator/=(double s) {
         for (size_t i = 0; i < size; i++) {
             coordinates[i] /= s;
@@ -93,6 +107,14 @@ public:
         if (length() == 0) return *this;
         *this *= (1.0 / length());
         return *this;
+    }
+
+    T sum() {
+        T s = coordinates[0];
+        for (size_t i = 1; i < size; i++) {
+            s += coordinates[i] ;
+        }
+        return s;
     }
 
     double length() const {
