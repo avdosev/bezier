@@ -73,9 +73,9 @@ int main(int argc, char** argv) {
     }
 
     std::cout << "what i got:" << std::endl;
-    std::copy(prop_points.begin(), prop_points.end(), std::ostream_iterator<point_t>(std::cout, " "));
+    std::copy(prop_points.begin(), prop_points.end(), std::ostream_iterator<point_t>(std::cout, "  "));
     std::cout << std::endl;
-    std::copy(points_for_plane.begin(), points_for_plane.end(), std::ostream_iterator<point_t>(std::cout, " "));
+    std::copy(points_for_plane.begin(), points_for_plane.end(), std::ostream_iterator<point_t>(std::cout, "  "));
     std::cout << std::endl;
 
     // просчитываем безье
